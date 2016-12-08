@@ -1,0 +1,77 @@
+ Another common implicit rule is for the construction of .o (object) files out of .c (source files).
+
+.o.c:
+        $(CC) $(CFLAGS) -c $<
+
+alternatively
+
+.o.c:
+        $(CC) $(CFLAGS) -c $*.c
+.c:
+        $(CC) $(CFLAGS) $@.c $(LDFLAGS) -o $@
+
+This Implicit rule says how to make x out of x.c -- run cc on x.c and call the output x. The rule is implicit because no particular target is mentioned. It can be used in all cases. 
+
+
+# To make an executable
+
+printenv: $(OBJS)
+        $(CC) $(LDFLAGS) -o $@ $(OBJS)
+
+# To make an object from source
+       $(CC) $(CFLAGS) -c $*.c
+
+# make the printenv command
+#
+OWNER=bin
+GROUP=bin
+CTAGS= ctags -x >tags
+CFLAGS= -O
+LDFLAGS= -s
+CC=cc
+GET=co
+SRCS=printenv.c
+OBJS=printenv.o
+SHAR=shar
+MANDIR=/usr/man/manl/printenv.l
+BINDIR=/usr/local/bin
+DEPEND= makedepend $(CFLAGS)
+all:    printenv
+
+Special Macros
+
+Before issuing any command in a target rule set there are certain special macros predefined.
+
+    $@ is the name of the file to be made.
+    $? is the names of the changed dependents. 
+
+So, for example, we could use a rule
+
+
+printenv: printenv.c
+        $(CC) $(CFLAGS) $? $(LDFLAGS) -o $@
+
+alternatively:
+
+printenv: printenv.c
+        $(CC) $(CFLAGS) $@.c $(LDFLAGS) -o $@
+
+There are two more special macros used in implicit rules. They are:
+
+    $< the name of the related file that caused the action.
+    $* the prefix shared by target and dependent files. 
+..............................................................................................
+
+   sampleexec : src1.o src2.o 
+             gcc -o sampleexec src1.o src2.o
+
+     src1.o : src1.c 
+             gcc -c src1.c
+
+     src2.o : src2.c 
+
+             gcc -c src2.c
+
+To compile just run:
+
+# make
